@@ -17,6 +17,7 @@ Result
 PSD is the Power spectrum density.
 ACF is the Autocorrelation Function.
 ROI is the Region of interest.
+Below figures shows ROI of an image, PSD, log(PSD) and ACF. You can move ROI and see how PSD and ACF varies.
 
 The figure below shows the result of anisotropic ROI
 ![](/www/images/1.jpg)
