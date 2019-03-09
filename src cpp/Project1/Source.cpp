@@ -22,8 +22,9 @@ using namespace std;
 void help()
 {
 	cout << endl
-		<< "This program demonstrated the use of the discrete Fourier transform (DFT). "	<< endl
-		<< "The dft of an image is taken and it's power spectrum is displayed."				<< endl;
+		<< "This program demonstrates the use of the Power spectrum density (PSD)."			<< endl
+		<< "The DFT of an image is taken and it's PSD is displayed."						<< endl
+		<< "Moving window allows to observe PSD and ACF in different imagelocations"		<< endl;
 }
 
 // Functions rearranges quadrants of Fourier image  so that the origin is at the image center
@@ -84,19 +85,19 @@ void CalcPSD(const Mat& inputImg, Mat& outputImg, int flag = 0)
 }
 
 // Function calculates autocorrelation function
-// InputPSD - PSD
+// inputPSD - PSD
 // outputImg - ACF
-void CalcACF(Mat& InputPSD, Mat& outputImg)
+void CalcACF(const Mat& inputPSD, Mat& outputImg)
 {
 	float * p;
 	Mat imgACF;
-	Mat planesACF[2] = { Mat_<float>(InputPSD.clone()), Mat::zeros(InputPSD.size(), CV_32F) };
+	Mat planesACF[2] = { Mat_<float>(inputPSD.clone()), Mat::zeros(inputPSD.size(), CV_32F) };
 	merge(planesACF, 2, imgACF);     // Add to the expanded another plane with zeros
 									 //dft(imgACF, imgACF, DFT_INVERSE + DFT_SCALE);
 	idft(imgACF, imgACF);            // this way the result may fit in the source matrix
 	split(imgACF, planesACF);
 	p = planesACF[0].ptr<float>(0);
-	p[0] = 0;
+	p[0] = 0;						// in order to improve visualisation
 	outputImg = planesACF[0];
 }
 
@@ -131,9 +132,11 @@ int main()
 			box.x = imgGray.cols - box.size().width;
 		if (box.br().y > imgGray.rows)
 			box.y = imgGray.rows - box.size().height;
+
 		Mat img_temp = imgGray.clone();
 		Mat imgRoi = imgGray(box).clone();
 		rectangle(img_temp, box.tl(), box.br(), Scalar(255));
+
 		Mat imgPSD, imglogPSD, imgACF;
 		CalcPSD(imgRoi, imgPSD);
 		CalcPSD(imgRoi, imglogPSD, true);
