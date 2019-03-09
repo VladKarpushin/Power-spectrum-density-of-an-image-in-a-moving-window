@@ -110,13 +110,13 @@ int main()
 {
 	help();
 	Mat img = imread("D:\\home\\programming\\vc\\new\\2_OpenCV official tutorial\\4_Discrete Fourier Transform\\input\\00000110_resized.TIF");
-
 	if (img.empty()) //check whether the image is loaded or not
 	{
 		cout << "ERROR : Image cannot be loaded..!!" << endl;
 		//system("pause"); //wait for a key press
 		return -1;
 	}
+	const Size2i ROIsize = Size2i(128, 128);
 
 	Mat imgGray;
 	cvtColor(img, imgGray, COLOR_BGR2GRAY);
@@ -127,7 +127,7 @@ int main()
 	while (true)
 	{
 		cout << p_origin << endl;
-		Rect box(p_origin, Size2i(128,128));
+		Rect box(p_origin, ROIsize);
 		if (box.br().x > imgGray.cols)
 			box.x = imgGray.cols - box.size().width;
 		if (box.br().y > imgGray.rows)
